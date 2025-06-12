@@ -12,25 +12,48 @@ from models.rerank.baidu import BaiduRerankerPostprocessor
 
 from models.embedding.baidu import BaiduEmbedding
 
+from common.constants import CONFIG_LOCAL_MODEL_CONFIG
+from models.embedding.qwen3Embedding import QwenLocalEmbedding
+from models.llm.qwen import QwenAILLM
+from models.rerank.qwen3Reramnk import QwenLocalRerankerPostprocessor
+
 
 @singleton
 class RagFlow:
     def __init__(self):
-        self.embedding_model = BaiduEmbedding(
-            api_key=CONFIG_BAIDU_API['api_key'],
-            model=CONFIG_BAIDU_API.get("embedding_model")
+        # 阿里千问3系列本地模型配置
+        self.embedding_model = QwenLocalEmbedding(
+            model_path=CONFIG_LOCAL_MODEL_CONFIG["embedding_model_path"],
+            device=CONFIG_LOCAL_MODEL_CONFIG["device"]
         )
-        self.rerank_model = BaiduRerankerPostprocessor(
-            api_key=CONFIG_BAIDU_API['api_key'],
+
+        self.rerank_model = QwenLocalRerankerPostprocessor(
+            model_path=CONFIG_LOCAL_MODEL_CONFIG["rerank_model_path"],
             top_n=CONFIG_RAG['rerank_top_n'],
-            model=CONFIG_BAIDU_API.get("rerank_model")
+            device=CONFIG_LOCAL_MODEL_CONFIG["device"]
         )
-        self.llm_model = ZhipuAILLM(
-            api_key=CONFIG_ZHIPU_API['api_key'],
-            model=CONFIG_ZHIPU_API.get("llm_model"),
+        self.llm_model = QwenAILLM(
+            api_key=CONFIG_DASHSCOPE_API['api_key'],
+            model=CONFIG_DASHSCOPE_API.get("llm_model"),
             temperature=CONFIG_RAG['llm_temperature'],
             top_p=CONFIG_RAG['llm_top_p'],
         )
+        ## 非阿里系统
+        # self.embedding_model = BaiduEmbedding(
+        #     api_key=CONFIG_BAIDU_API['api_key'],
+        #     model=CONFIG_BAIDU_API.get("embedding_model")
+        # )
+        # self.rerank_model = BaiduRerankerPostprocessor(
+        #     api_key=CONFIG_BAIDU_API['api_key'],
+        #     top_n=CONFIG_RAG['rerank_top_n'],
+        #     model=CONFIG_BAIDU_API.get("rerank_model")
+        # )
+        # self.llm_model = ZhipuAILLM(
+        #     api_key=CONFIG_ZHIPU_API['api_key'],
+        #     model=CONFIG_ZHIPU_API.get("llm_model"),
+        #     temperature=CONFIG_RAG['llm_temperature'],
+        #     top_p=CONFIG_RAG['llm_top_p'],
+        # )
         ## 阿里百炼系列
         # self.embedding_model = DashScopeEmbedding(
         #     api_key=CONFIG_DASHSCOPE_API['api_key'],

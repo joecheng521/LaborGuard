@@ -1,4 +1,6 @@
 import os
+
+import torch
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -40,4 +42,11 @@ class Config:
     DEEPSEEK_API = {
         "api_key": os.getenv("DEEPSEEK_API_KEY"),
         "llm_model": os.getenv("DEEPSEEK_LLM_MODEL", "deepseek-chat")
+    }
+
+    # 本地模型配置
+    LOCAL_MODEL_CONFIG = {
+        "embedding_model_path": "F:\QIQI\LaborGuard\src\Qwen\Qwen3-Embedding-0.6B\Qwen\Qwen3-Embedding-0___6B",
+        "rerank_model_path": "F:\QIQI\LaborGuard\src\Qwen\Qwen3-Reranker-0.6B\Qwen\Qwen3-Reranker-0___6B",
+        "device": "cuda" if torch.cuda.is_available() else "cpu"
     }
